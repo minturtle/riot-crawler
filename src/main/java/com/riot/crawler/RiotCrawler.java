@@ -39,7 +39,10 @@ public class RiotCrawler implements Runnable{
                     List<Match> summonerMatch = conn.getMatchesBySummonerPUUID(puuid, 0, 10);
 
                     summonerMatch.forEach((match)->{
-                        matchRepository.save(new MatchEntity(match, summonerEntity));
+                        if(matchRepository.findByMatchId(match.getMetadata().getMatchId()) == null){
+                            matchRepository.save(new MatchEntity(match));
+                        }
+
                         for (String participantsPuuid : match.getMetadata().getParticipants()) {
                             if(summonerPuuidCheckSet.contains(participantsPuuid)) continue;
                             summonerPuuidCheckSet.add(participantsPuuid);
